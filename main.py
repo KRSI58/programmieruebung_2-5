@@ -21,9 +21,11 @@ person_list = read_data.get_person_list()
 # person_names = read_data.get_person_list()
 
 # Nutzen Sie ihre neue Liste anstelle der hard-gecodeten Lösung
-st.session_state.current_user = st.selectbox(
-    'Versuchsperson',
-    options = person_list, key="sbVersuchsperson")
+col1, col2 = st.columns(2)
+with col1:
+    st.session_state.current_user = st.selectbox(
+        'Versuchsperson',
+        options = person_list, key="sbVersuchsperson")
 
         # Anlegen des Session State. Bild, wenn es kein Bild gibt
 if 'picture_path' not in st.session_state:
@@ -38,5 +40,6 @@ if st.session_state.current_user in person_list:
     # ...
 
     # Öffne das Bild und Zeige es an
-image = Image.open(st.session_state.picture_path)
-st.image(image, caption=st.session_state.current_user)
+with col2: 
+    image = Image.open(st.session_state.picture_path)
+    st.image(image, caption=st.session_state.current_user)
