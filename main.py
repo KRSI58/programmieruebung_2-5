@@ -1,7 +1,7 @@
 import streamlit as st
 import read_data 
 from PIL import Image
-from read_pandas import read_my_csv, make_plot, assign_hr_zone, seconds_to_mmss
+from read_pandas import read_my_csv, make_plot, seconds_to_mmss
 
 
 st.write("# EKG APP")
