@@ -1,6 +1,8 @@
 import streamlit as st
 import read_data 
 from PIL import Image
+from read_pandas import read_my_csv, make_plot, assign_hr_zone, seconds_to_mmss
+
 
 st.write("# EKG APP")
 st.write("## Versuchsperson auswählen")
@@ -36,3 +38,44 @@ if st.session_state.current_user in person_list:
 with col2: 
     image = Image.open(st.session_state.picture_path)
     st.image(image, caption=st.session_state.current_user)
+
+
+
+
+st.title("Training Session Overview")
+st.write("This plot shows your **Power Output** and **Heart Rate** over time.")
+
+# Input max HR
+max_hr = st.number_input("Gib deine maximale Herzfrequenz (max HR) ein:", min_value=100, max_value=220, value=190)
+
+# Read data
+df = read_my_csv()
+
+# Create plot with max_hr for zones
+fig, df_plot = make_plot(df, max_hr)
+
+# Display plot
+st.plotly_chart(fig, use_container_width=True)
+
+# Show raw data if checked
+if st.checkbox("Show raw data"):
+    st.dataframe(df.head(2000))
+
+# Show stats below plot
+st.write(f"Mittelwert der Leistung: {df['PowerOriginal'].mean():.2f} W")
+st.write(f"Maximalwert der Leistung: {df['PowerOriginal'].max():.2f} W")
+
+# Calculate and display time spent in zones and average power per zone
+time_per_zone = df_plot["HR_Zone"].value_counts().sort_index()
+power_per_zone = df_plot.groupby("HR_Zone")["PowerOriginal"].mean()
+
+time_per_zone_mmss = time_per_zone.apply(seconds_to_mmss)
+time_per_zone_df = time_per_zone_mmss.reset_index()
+time_per_zone_df.columns = ["HR Zone", "Time (mm:ss)"]
+
+
+st.write("Zeit in den HR-Zonen (mm:ss):")
+st.write(time_per_zone_df)
+
+st.write("Durchschnittliche Leistung pro HR-Zone (W):")
+st.write(power_per_zone)
