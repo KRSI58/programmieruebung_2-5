@@ -54,7 +54,7 @@ def make_plot(df, max_hr):
         zone_data = df_plot[df_plot["HR_Zone"] == zone]
         fig.add_trace(go.Scatter(
             x=zone_data["Time"], y=zone_data["HeartRate"],
-            mode='markers+lines',
+            mode='markers',
             name=f"HR Zone {zone}",
             yaxis="y2",
             marker=dict(color=zone_colors[zone], size=5),

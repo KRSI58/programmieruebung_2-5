@@ -70,12 +70,11 @@ time_per_zone = df_plot["HR_Zone"].value_counts().sort_index()
 power_per_zone = df_plot.groupby("HR_Zone")["PowerOriginal"].mean()
 
 time_per_zone_mmss = time_per_zone.apply(seconds_to_mmss)
-time_per_zone_df = time_per_zone_mmss.reset_index()
-time_per_zone_df.columns = ["HR Zone", "Time (mm:ss)"]
+
 
 
 st.write("Zeit in den HR-Zonen (mm:ss):")
-st.write(time_per_zone_df)
+st.write(time_per_zone_mmss)
 
 st.write("Durchschnittliche Leistung pro HR-Zone (W):")
 st.write(power_per_zone)
