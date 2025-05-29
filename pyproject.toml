@@ -1,5 +1,5 @@
 [project]
-name = "programmieruebung_2-5"
+name = "programmieruebung_2-5-1"
 version = "0.1.0"
 description = "Default template for PDM package"
 authors = [
@@ -12,7 +12,7 @@ dependencies = [
     "pyproject-toml>=0.1.0",
     "plotly>=6.1.2",
 ]
-requires-python = "==3.13.*"
+requires-python = "==3.12.*"
 readme = "README.md"
 license = {text = "MIT"}
 
