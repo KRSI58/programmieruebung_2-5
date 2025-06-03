@@ -27,6 +27,13 @@ def assign_hr_zone(hr, max_hr):
 def find_best_effort(PowerOriginal, duration_seconds):
     return PowerOriginal.rolling(window=duration_seconds).mean().max()
 
+def generate_power_curve(power_series, durations_s):
+    best_powers = [find_best_effort(power_series, d) for d in durations_s]
+    return pd.DataFrame({
+        'duration_s': durations_s,
+        'best_avg_power': best_powers,
+        'duration_min': [d / 60 for d in durations_s]
+    })
 
 def seconds_to_mmss(seconds):
     minutes = seconds // 60
@@ -91,3 +98,16 @@ if __name__ == "__main__":
     #fig.show()
     #print(df.head(10))
     print(find_best_effort(df["PowerOriginal"], 1))
+    durations_s = [10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300,
+               600, 900, 1200, 1800, 2400, 3600, 5400]
+    df_powercurve = generate_power_curve(Power, durations_s)
+
+# Plot
+plt.figure(figsize=(10, 6))
+plt.plot(df_powercurve['duration_min'], df_powercurve['best_avg_power'], marker='o')
+plt.xscale('log')
+plt.xlabel('Duration (minutes)')
+plt.ylabel('Best Average Power (W)')
+plt.title('Universal Power Curve')
+plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+plt.show()
