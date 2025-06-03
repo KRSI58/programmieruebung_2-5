@@ -80,3 +80,7 @@ st.write(time_per_zone_mmss)
 
 st.write("Durchschnittliche Leistung pro HR-Zone (W):")
 st.write(power_per_zone)
+
+
+
+if __name__ == "__main__":
