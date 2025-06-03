@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
+import matplotlib.pyplot as plt
 
 def read_my_csv():
     df = pd.read_csv("data/activities/activity.csv", sep=",")
@@ -31,8 +32,7 @@ def generate_power_curve(power_series, durations_s):
     best_powers = [find_best_effort(power_series, d) for d in durations_s]
     return pd.DataFrame({
         'duration_s': durations_s,
-        'best_avg_power': best_powers,
-        'duration_min': [d / 60 for d in durations_s]
+        'best_avg_power': best_powers
     })
 
 def seconds_to_mmss(seconds):
@@ -93,21 +93,42 @@ def make_plot(df, max_hr):
 if __name__ == "__main__":
     df = read_data_csv()
 
-    #pio.renderers.default = "browser"
+    pio.renderers.default = "browser"
     #fig = make_plot(df)
     #fig.show()
     #print(df.head(10))
     print(find_best_effort(df["PowerOriginal"], 1))
     durations_s = [10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300,
                600, 900, 1200, 1800, 2400, 3600, 5400]
-    df_powercurve = generate_power_curve(Power, durations_s)
 
-# Plot
-plt.figure(figsize=(10, 6))
-plt.plot(df_powercurve['duration_min'], df_powercurve['best_avg_power'], marker='o')
-plt.xscale('log')
-plt.xlabel('Duration (minutes)')
-plt.ylabel('Best Average Power (W)')
-plt.title('Universal Power Curve')
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
-plt.show()
+    df_powercurve = generate_power_curve(df["PowerOriginal"], durations_s)
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=df_powercurve['duration_s'],
+        y=df_powercurve['best_avg_power'],
+        mode='lines+markers',
+        line=dict(shape='spline', color='royalblue'),
+        marker=dict(size=6),
+        name='Best Avg Power'
+    ))
+
+    fig.update_layout(
+        title='Universal Power Curve',
+        xaxis=dict(
+            title='Duration (seconds)',
+            type='log',
+            gridcolor='lightgray'
+        ),
+        yaxis=dict(
+            title='Best Average Power (W)',
+            gridcolor='lightgray'
+        ),
+        template='plotly_white',
+        hovermode='x unified'
+    )
+
+    fig.show()
+    fig.save("power curve.png")
+
+
