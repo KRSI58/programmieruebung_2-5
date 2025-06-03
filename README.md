@@ -89,13 +89,13 @@ in verschiedenen Phasen der Belastung.
 
 ---
 
-## 🖼️ Ergebnis-Screenshot
+## 🖼️ Screenshot
 
 ![Power Curve](power_curve.png)
 
 ---
 
-## 🔄Ablaufdiagramm
+## 🔄Ablaufdiagramm Aufgabe 4
 
 ```mermaid
 flowchart TD
