@@ -24,9 +24,9 @@ def assign_hr_zone(hr, max_hr):
     else:
         return 5
     
-def find_best_effort(PowerOriginal):
-    df.rolling(window=30).max()
-    return df
+def find_best_effort(PowerOriginal, duration_seconds):
+    return PowerOriginal.rolling(window=duration_seconds).mean().max()
+
 
 def seconds_to_mmss(seconds):
     minutes = seconds // 60
@@ -85,7 +85,9 @@ def make_plot(df, max_hr):
 
 if __name__ == "__main__":
     df = read_data_csv()
+
     #pio.renderers.default = "browser"
     #fig = make_plot(df)
     #fig.show()
-    print(df.head(10))
+    #print(df.head(10))
+    print(find_best_effort(df["PowerOriginal"], 1))
