@@ -57,7 +57,7 @@ Dabei werden automatisch folgende Kennwerte berechnet:
 | `data/person_db.json` | JSON-Datei mit Stammdaten und EKG-Testverweisen der Personen   |
 | `main.py`             | Einstiegspunkt der App                                         |
 | `read_data.py`        | Funktionen zum Einlesen der Daten                              |
-| `read_pandas.py`      | Funktionen zur Darstellung mit Pandas                      |
+| `read_pandas.py`      | Funktionen zur Darstellung mit Pandas + Erstellen und Darstellen Powercurve                      |
 | `pyproject.toml`      | Definition der Abhängigkeiten und Projektkonfiguration für PDM |
 | `pdm.lock`            | Lock-Datei mit exakt aufgelösten Abhängigkeiten                |
 | `.gitignore`          | Dateien und Ordner, die von Git ignoriert werden               |
