@@ -56,7 +56,7 @@ Dabei werden automatisch folgende Kennwerte berechnet:
 | `data/pictures/`      | Profilbilder der Versuchspersonen                              |
 | `data/person_db.json` | JSON-Datei mit Stammdaten und EKG-Testverweisen der Personen   |
 | `main.py`             | Einstiegspunkt der App                                         |
-| `read_data.py`        | Funktionen zum Einlesen der Daten                              |
+| `read_data.py`        | Funktionen zum Einlesen der Daten + Plot Power Curve           |
 | `read_pandas.py`      | Funktionen zur Darstellung mit Pandas                      |
 | `pyproject.toml`      | Definition der Abhängigkeiten und Projektkonfiguration für PDM |
 | `pdm.lock`            | Lock-Datei mit exakt aufgelösten Abhängigkeiten                |
