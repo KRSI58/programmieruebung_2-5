@@ -97,7 +97,7 @@ if __name__ == "__main__":
     #fig = make_plot(df)
     #fig.show()
     #print(df.head(10))
-    print(find_best_effort(df["PowerOriginal"], 1))
+    #print(find_best_effort(df["PowerOriginal"], 1))
     durations_s = [10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300,
                600, 900, 1200, 1800, 2400, 3600, 5400]
 
