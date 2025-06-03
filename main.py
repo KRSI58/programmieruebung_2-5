@@ -67,9 +67,11 @@ st.write(f"Maximalwert der Leistung: {df['PowerOriginal'].max():.2f} W")
 
 # Calculate and display time spent in zones and average power per zone
 time_per_zone = df_plot["HR_Zone"].value_counts().sort_index()
+time_per_zone_mmss = time_per_zone.apply(seconds_to_mmss)
+
 power_per_zone = df_plot.groupby("HR_Zone")["PowerOriginal"].mean()
 
-time_per_zone_mmss = time_per_zone.apply(seconds_to_mmss)
+
 
 
 
