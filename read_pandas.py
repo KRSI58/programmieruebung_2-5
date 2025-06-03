@@ -32,7 +32,7 @@ def generate_power_curve(power_series, durations_s):
     best_powers = [find_best_effort(power_series, d) for d in durations_s]
     return pd.DataFrame({
         'duration_s': durations_s,
-        'best_avg_power': best_powers
+        'best_avg_power': best_powers,
     })
 
 def seconds_to_mmss(seconds):
@@ -102,6 +102,7 @@ if __name__ == "__main__":
                600, 900, 1200, 1800, 2400, 3600, 5400]
 
     df_powercurve = generate_power_curve(df["PowerOriginal"], durations_s)
+
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
@@ -113,22 +114,37 @@ if __name__ == "__main__":
         name='Best Avg Power'
     ))
 
+    tick_vals = durations_s
+
+    tick_text = []
+    for t in tick_vals:
+        if t < 60:
+            tick_text.append(f"{t}s")
+        else:
+            minutes = t / 60
+            if minutes.is_integer():
+                tick_text.append(f"{int(minutes)} min")
+            else:
+                tick_text.append(f"{minutes:.1f} min")
+
     fig.update_layout(
-        title='Universal Power Curve',
+        title='Power Curve',
         xaxis=dict(
-            title='Duration (seconds)',
+            title='Duration(s)',
             type='log',
-            gridcolor='lightgray'
+            tickvals=tick_vals,
+            ticktext=tick_text,
+            showticklabels=True,
+            dtick=1,  # sets ticks every power of 10
+            gridcolor='lightgray',
+            zeroline=False
         ),
         yaxis=dict(
-            title='Best Average Power (W)',
+            title='Power (W)',
             gridcolor='lightgray'
         ),
-        template='plotly_white',
-        hovermode='x unified'
+        template='plotly_white'
     )
 
     fig.show()
-    fig.save("power curve.png")
-
-
+    fig.write_image("power_curve.png")
