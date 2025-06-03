@@ -56,7 +56,7 @@ Dabei werden automatisch folgende Kennwerte berechnet:
 | `data/pictures/`      | Profilbilder der Versuchspersonen                              |
 | `data/person_db.json` | JSON-Datei mit Stammdaten und EKG-Testverweisen der Personen   |
 | `main.py`             | Einstiegspunkt der App                                         |
-| `read_data.py`        | Funktionen zum Einlesen der Daten + Plot Power Curve           |
+| `read_data.py`        | Funktionen zum Einlesen der Daten                              |
 | `read_pandas.py`      | Funktionen zur Darstellung mit Pandas                      |
 | `pyproject.toml`      | Definition der Abhängigkeiten und Projektkonfiguration für PDM |
 | `pdm.lock`            | Lock-Datei mit exakt aufgelösten Abhängigkeiten                |
@@ -78,5 +78,31 @@ flowchart TD
     Visualize --> End
 ```
 
+---
 
+# ⚡ Aufgabe 4 – Power Curve Analyse
 
+Diese Aufgabe generiert eine **Power Curve** aus Leistungsdaten (in Watt), z. B. aus Radfahr-Aktivitäten.  
+Die Power Curve zeigt die **maximal erreichbare Durchschnittsleistung** über verschiedene Zeitintervalle  
+(z. B. 5 s, 1 min, 5 min, …) und gibt damit einen schnellen Überblick über die Belastbarkeit der Testperson  
+in verschiedenen Phasen der Belastung.
+
+---
+
+## 🖼️ Ergebnis-Screenshot
+
+![Power Curve](power_curve.png)
+
+---
+
+## 🔄Ablaufdiagramm
+
+```mermaid
+flowchart TD
+    Start --> LoadData
+    LoadData --> FindBestEffort
+    FindBestEffort --> GeneratePowerCurve
+    GeneratePowerCurve --> PlotPowerCurve
+    PlotPowerCurve --> Show_and_Save
+    Show_and_Save --> End
+```
