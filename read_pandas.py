@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
 
+
 def read_my_csv():
     df = pd.read_csv("data/activities/activity.csv", sep=",")
     selected_columns = ["Duration", "PowerOriginal", "HeartRate"]  
@@ -31,7 +32,7 @@ def generate_power_curve(power_series, durations_s):
     best_powers = [find_best_effort(power_series, d) for d in durations_s]
     return pd.DataFrame({
         'duration_s': durations_s,
-        'best_avg_power': best_powers,
+        'best_avg_power': best_powers
     })
 
 def seconds_to_mmss(seconds):
@@ -87,20 +88,21 @@ def make_plot(df, max_hr):
 
     return fig, df_plot
 
+def plot_power_curve_interactive(df_powercurve, save_as_png=False, filename="power_curve.png"):
+    pio.renderers.default = "browser" # Soll ich das hier so lassen? Oder soll das nach oben?
+    durations_s = df_powercurve['duration_s'].tolist()
 
-
-if __name__ == "__main__":
-    df = read_data_csv()
-
-    pio.renderers.default = "browser"
-    #fig = make_plot(df)
-    #fig.show()
-    #print(df.head(10))
-    #print(find_best_effort(df["PowerOriginal"], 1))
-    durations_s = [10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300,
-               600, 900, 1200, 1800, 2400, 3600, 5400]
-
-    df_powercurve = generate_power_curve(df["PowerOriginal"], durations_s)
+    tick_vals = durations_s
+    tick_text = []
+    for t in tick_vals:
+        if t < 60:
+            tick_text.append(f"{t}s")
+        else:
+            minutes = t / 60
+            if minutes.is_integer():
+                tick_text.append(f"{int(minutes)} min")
+            else:
+                tick_text.append(f"{minutes:.1f} min")
 
     fig = go.Figure()
 
@@ -113,37 +115,45 @@ if __name__ == "__main__":
         name='Best Avg Power'
     ))
 
-    tick_vals = durations_s
-
-    tick_text = []
-    for t in tick_vals:
-        if t < 60:
-            tick_text.append(f"{t}s")
-        else:
-            minutes = t / 60
-            if minutes.is_integer():
-                tick_text.append(f"{int(minutes)} min")
-            else:
-                tick_text.append(f"{minutes:.1f} min")
-
     fig.update_layout(
         title='Power Curve',
         xaxis=dict(
-            title='Duration(s)',
+            title='Dauer (log Skala)',
             type='log',
             tickvals=tick_vals,
             ticktext=tick_text,
             showticklabels=True,
-            dtick=1,  # sets ticks every power of 10
             gridcolor='lightgray',
             zeroline=False
         ),
         yaxis=dict(
-            title='Power (W)',
+            title='Leistung (W)',
             gridcolor='lightgray'
         ),
         template='plotly_white'
     )
 
     fig.show()
-    fig.write_image("power_curve.png")
+
+    if save_as_png:
+        try:
+            fig.write_image(filename)
+        except Exception as e:
+            print(f"[WARNUNG] PNG-Speicherung fehlgeschlagen: {e}")
+            print("→ Installiere 'kaleido' mit: pip install -U kaleido")
+
+    return fig
+
+if __name__ == "__main__":
+    df = read_data_csv()
+    durations_s = [10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300,
+                   600, 900, 1200, 1800, 2400, 3600, 5400]
+    df_powercurve = generate_power_curve(df["PowerOriginal"], durations_s)
+
+    # Nur anzeigen
+    plot_power_curve_interactive(df_powercurve)
+
+    # Oder anzeigen + speichern:
+    # plot_power_curve_interactive(df_powercurve, save_as_png=True)
+
+    
