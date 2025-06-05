@@ -1,7 +1,6 @@
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
-import matplotlib.pyplot as plt
 
 def read_my_csv():
     df = pd.read_csv("data/activities/activity.csv", sep=",")
