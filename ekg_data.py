@@ -29,7 +29,6 @@ class EKG_data:
                     return EKG_data(ekg)
         raise ValueError(f"EKG with ID {ekg_id} not found.")
        
-
     @staticmethod
     def find_peaks(series, threshold=360, window_size=5, min_peak_distance=200):
         """
@@ -38,8 +37,13 @@ class EKG_data:
         peaks = []
         last_index = -min_peak_distance
 
-        values = series.values
-        indices = series.index
+        if isinstance(series, pd.Series):
+            values = series.values
+            indices = series.index
+        else:
+            values = series
+            indices = range(len(series))
+
 
         for i in range(window_size, len(series) - window_size):
             window = values[i - window_size: i + window_size + 1]
@@ -53,11 +57,7 @@ class EKG_data:
                     last_index = center_index
 
         return pd.DataFrame(peaks, columns=["index", "value"])
-
-
-
-
-       
+   
     def calc_max_heart_rate(self, year_of_birth, gender):
         """Berechnet die maximale Herzfrequenz basierend auf Alter und Geschlecht."""
         age = datetime.now().year - year_of_birth
@@ -96,6 +96,13 @@ class EKG_data:
         time_ms = time_ms[mask].reset_index(drop=True)
         signal = signal[mask].reset_index(drop=True)
 
+        # 🛡 Schutz: Wenn nach dem Filtern keine Daten mehr vorhanden sind
+        if time_ms.empty or signal.empty:
+            return go.Figure().update_layout(
+                title="⚠️ Keine Daten im gewählten Zeitbereich",
+                xaxis_title="Zeit (s)",
+                yaxis_title="Spannung (mV)"
+            )
         # Zeit auf 0 normieren (und in Sekunden umrechnen)
         time_sec = (time_ms - time_ms.iloc[0]) / 1000.0
 
@@ -130,11 +137,8 @@ class EKG_data:
             yaxis_title="Spannung (mV)"
         )
 
-        fig.show()
-
-
-
-
+        return fig
+        
 
 
 if __name__ == "__main__":

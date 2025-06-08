@@ -1,84 +1,61 @@
+# main.py
 import streamlit as st
-import person 
-from PIL import Image
-from read_pandas import read_my_csv, make_plot, seconds_to_mmss
+from person import Person
+from ekg_data import EKG_data
+import os
 
+st.set_page_config(page_title="EKG APP", layout="centered")
 
-st.write("# EKG APP")
-st.write("## Versuchsperson auswählen")
+# Titel
+st.title("EKG APP")
 
-# Session State wird leer angelegt, solange er noch nicht existiert
-if 'current_user' not in st.session_state:
-    st.session_state.current_user = 'None'
+# Personen laden
+persons_data = Person.load_person_data()
+person_names = Person.get_person_list(persons_data)
 
+# Auswahl der Versuchsperson
+selected_name = st.selectbox("Versuchsperson auswählen", person_names)
 
-st.write("Der Name ist: ", st.session_state.current_user) 
+if selected_name:
+    person = Person.find_person_data_by_name(selected_name)
 
+    st.write(f"**Der Name ist:** {person['lastname']} {person['firstname']}")
 
-# Legen Sie eine neue Liste mit den Personennamen an indem Sie ihre Funktionen aufrufen
-person_data = person.load_person_data()
-person_list = person.get_person_list()
+    # Bild anzeigen
+    picture_path = person["picture_path"]
+    if os.path.exists(picture_path):
+        st.image(picture_path, caption=selected_name, width=150)
+    else:
+        st.warning("Kein Bild gefunden.")
 
-# Nutzen Sie ihre neue Liste anstelle der hard-gecodeten Lösung
-col1, col2 = st.columns(2)
-with col1:
-    st.session_state.current_user = st.selectbox(
-        'Versuchsperson',
-        options = person_list, key="sbVersuchsperson")
+    # Anzeige der EKG-Daten-Auswahl
+    ekg_tests = person.get("ekg_tests", [])
+    if ekg_tests:
+        ekg_ids = [str(test["id"]) for test in ekg_tests]
+        selected_ekg_id = st.selectbox("Wähle EKG-Datensatz", ekg_ids)
 
-# Anlegen des Session State. Bild, wenn es kein Bild gibt
-if 'picture_path' not in st.session_state:
-        st.session_state.picture_path = 'data/pictures/none.jpg'
+        if selected_ekg_id:
+            ekg_obj = EKG_data.load_by_id(int(selected_ekg_id), persons_data)
 
-# Suche den Pfad zum Bild, aber nur wenn der Name bekannt ist
-if st.session_state.current_user in person_list:
-        st.session_state.picture_path = person.find_person_data_by_name(st.session_state.current_user)["picture_path"]
+            # Max. Herzfrequenz anzeigen
+            hr_info = ekg_obj.calc_max_heart_rate(ekg_obj.birth_year, ekg_obj.gender)
+            st.subheader("Training Session Overview")
+            st.write("Gib deine maximale Herzfrequenz (max HR) ein:")
+            st.number_input("Max HR", value=hr_info["max_hr"], step=1, key="max_hr_input")
 
-# Öffne das Bild und Zeige es an
-with col2: 
-    image = Image.open(st.session_state.picture_path)
-    st.image(image, caption=st.session_state.current_user)
+            # Plot anzeigen
+            # Bereich automatisch setzen
+            start_time = ekg_obj.df["time in ms"].min()
+            end_time = ekg_obj.df["time in ms"].min() + 10000
 
-
-
-
-st.title("Training Session Overview")
-st.write("This plot shows your **Power Output** and **Heart Rate** over time.")
-
-# Input max HR
-max_hr = st.number_input("Gib deine maximale Herzfrequenz (max HR) ein:", min_value=100, max_value=220, value=190)
-
-# Read data
-df = read_my_csv()
-
-# Create plot with max_hr for zones
-fig, df_plot = make_plot(df, max_hr)
-
-# Display plot
-st.plotly_chart(fig, use_container_width=True)
-
-# Show raw data if checked
-if st.checkbox("Show raw data"):
-    st.dataframe(df.head(2000))
-
-# Show stats below plot
-st.write(f"Mittelwert der Leistung: {df['PowerOriginal'].mean():.2f} W")
-st.write(f"Maximalwert der Leistung: {df['PowerOriginal'].max():.2f} W")
-
-# Calculate and display time spent in zones and average power per zone
-time_per_zone = df_plot["HR_Zone"].value_counts().sort_index()
-time_per_zone_mmss = time_per_zone.apply(seconds_to_mmss)
-
-power_per_zone = df_plot.groupby("HR_Zone")["PowerOriginal"].mean()
-
-
-
-
-
-st.write("Zeit in den HR-Zonen (mm:ss):")
-st.write(time_per_zone_mmss)
-
-st.write("Durchschnittliche Leistung pro HR-Zone (W):")
-st.write(power_per_zone)
-
+            try:
+                fig = ekg_obj.plot_time_series(
+                    threshold=360,
+                    min_peak_distance=200,
+                    range_start=start_time,
+                    range_end=end_time
+                )
+                st.plotly_chart(fig, use_container_width=True, key=f"plot_{selected_ekg_id}")
+            except Exception as e:
+                st.error(f"Fehler beim Erstellen des Plots: {e}")
 
