@@ -73,15 +73,15 @@ Dabei werden automatisch folgende Kennwerte berechnet:
 
 ```mermaid
 flowchart TD
-    A[👤 Benutzer wählt Versuchsperson] --> B[📂 Lade Personendaten aus person_db.json]
-    B --> C[🖼️ Zeige Profilbild]
-    C --> D[📋 Auswahl einer EKG-Session]
-    D --> E[📄 Lade EKG-Daten (CSV)]
-    E --> F[⏱️ Normalisiere Zeit: Start bei 0 ms]
-    F --> G[⏳ Filtere ersten 15 Sekunden]
-    G --> H[📈 Finde Peaks im EKG-Signal]
-    H --> I[📊 Zeige EKG-Plot mit markierten Peaks]
-    I --> J[❤️ Berechne & zeige maximale Herzfrequenz]
+    A[Benutzer wählt Versuchsperson] --> B[Lade Personendaten aus person_db.json]
+    B --> C[Zeige Profilbild]
+    C --> D[Auswahl einer EKG-Session]
+    D --> E[Lade EKG-Daten (CSV)]
+    E --> F[Normalisiere Zeit: Start bei 0 ms]
+    F --> G[Filtere ersten 15 Sekunden]
+    G --> H[Finde Peaks im EKG-Signal]
+    H --> I[Zeige EKG-Plot mit markierten Peaks]
+    I --> J[Berechne & zeige maximale Herzfrequenz]
 
     style A fill:#f9f,stroke:#333,stroke-width:1px
     style J fill:#cfc,stroke:#333,stroke-width:1px
