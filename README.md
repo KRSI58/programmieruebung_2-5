@@ -45,7 +45,10 @@ Dabei werden automatisch folgende Kennwerte berechnet:
 ![alt text](screenshot.png)
 
 ---
+## 🖼️APP Screenshot (Aufgabe 5)
+![image](https://github.com/user-attachments/assets/eb3698f2-8a48-46fa-ba6e-9d5ae2505a35)
 
+---
 ## 🗂️Projektstruktur
 
 |📁Datei/Ordner          | 📝Beschreibung                                                   |
@@ -56,7 +59,8 @@ Dabei werden automatisch folgende Kennwerte berechnet:
 | `data/pictures/`      | Profilbilder der Versuchspersonen                              |
 | `data/person_db.json` | JSON-Datei mit Stammdaten und EKG-Testverweisen der Personen   |
 | `main.py`             | Einstiegspunkt der App                                         |
-| `read_data.py`        | Funktionen zum Einlesen der Daten                              |
+| `person.py`           | Enthält die Klasse Person zum Laden und Auslesen von Stammdaten|
+| `ekg_data.py`         | Enthält die Klasse EKG_data zum Laden, Verarbeiten und Plotten von EKGs|
 | `read_pandas.py`      | Funktionen zur Darstellung mit Pandas + Erstellen und Darstellen Powercurve                      |
 | `pyproject.toml`      | Definition der Abhängigkeiten und Projektkonfiguration für PDM |
 | `pdm.lock`            | Lock-Datei mit exakt aufgelösten Abhängigkeiten                |
@@ -69,13 +73,18 @@ Dabei werden automatisch folgende Kennwerte berechnet:
 
 ```mermaid
 flowchart TD
-    Start --> LoadData
-    LoadData --> SelectPerson
-    SelectPerson --> SetMaxHR
-    SetMaxHR --> ProcessData
-    ProcessData --> CalculateMetrics
-    CalculateMetrics --> Visualize
-    Visualize --> End
+    A[👤 Benutzer wählt Versuchsperson] --> B[📂 Lade Personendaten aus person_db.json]
+    B --> C[🖼️ Zeige Profilbild]
+    C --> D[📋 Auswahl einer EKG-Session]
+    D --> E[📄 Lade EKG-Daten (CSV)]
+    E --> F[⏱️ Normalisiere Zeit: Start bei 0 ms]
+    F --> G[⏳ Filtere ersten 15 Sekunden]
+    G --> H[📈 Finde Peaks im EKG-Signal]
+    H --> I[📊 Zeige EKG-Plot mit markierten Peaks]
+    I --> J[❤️ Berechne & zeige maximale Herzfrequenz]
+
+    style A fill:#f9f,stroke:#333,stroke-width:1px
+    style J fill:#cfc,stroke:#333,stroke-width:1px
 ```
 
 ---
