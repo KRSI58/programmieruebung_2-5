@@ -58,4 +58,3 @@ if selected_name:
                 st.plotly_chart(fig, use_container_width=True, key=f"plot_{selected_ekg_id}")
             except Exception as e:
                 st.error(f"Fehler beim Erstellen des Plots: {e}")
-
